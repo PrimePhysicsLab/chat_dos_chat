@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Praça - Chat na Nuvem</title>
+    <title>A Praça - Chat Oficial</title>
     <style>
         :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        #app { width: 100%; max-width: 400px; background: white; height: 80vh; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
+        #app { width: 100%; max-width: 400px; background: white; height: 85vh; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
         .screen { display: none; padding: 20px; flex-direction: column; height: 100%; box-sizing: border-box; }
         .active { display: flex; }
         .login-screen { justify-content: center; text-align: center; gap: 15px; }
-        input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        button { padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 16px; }
+        button { padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:disabled { background: #ccc; }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        #chat-messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px 0; }
-        .msg { background: #e9e9eb; padding: 8px 12px; border-radius: 15px; max-width: 80%; }
+        #chat-messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 15px 0; }
+        .msg { background: #e9e9eb; padding: 10px 14px; border-radius: 15px; max-width: 80%; word-wrap: break-word; position: relative; }
         .msg.me { align-self: flex-end; background: var(--accent); color: white; }
-        .msg-info { font-size: 0.7rem; display: block; opacity: 0.8; }
-        .chat-input-area { display: flex; gap: 5px; border-top: 1px solid #eee; padding-top: 10px; }
+        .msg-info { font-size: 0.65rem; display: block; margin-bottom: 4px; font-weight: bold; opacity: 0.8; }
+        .chat-input-area { display: flex; gap: 8px; border-top: 1px solid #eee; padding-top: 15px; }
         .chat-input-area input { flex-grow: 1; }
     </style>
 </head>
@@ -27,91 +28,118 @@
 <div id="app">
     <div id="login-screen" class="screen">
         <h1>🌳 A Praça</h1>
-        <input type="text" id="username-input" placeholder="Seu nome...">
-        <button onclick="login()">Entrar</button>
+        <p>Entre para conversar</p>
+        <input type="text" id="username-input" placeholder="Seu apelido...">
+        <button onclick="login()">Entrar na Praça</button>
     </div>
 
     <div id="chat-screen" class="screen">
         <header>
-            <strong>A Praça</strong>
-            <button onclick="logout()" style="background:#e74c3c">Sair</button>
+            <strong>A Praça 🟢</strong>
+            <button onclick="logout()" style="background:#e74c3c; padding: 5px 10px;">Sair</button>
         </header>
         <div id="chat-messages"></div>
         <div class="chat-input-area">
-            <input type="text" id="message-input" placeholder="Diga algo..." onkeypress="handleEnter(event)">
+            <input type="text" id="message-input" placeholder="Escreva aqui..." onkeypress="handleEnter(event)">
             <button id="send-btn" onclick="sendMessage()">Enviar</button>
         </div>
     </div>
 </div>
 
 <script>
-    // COLAR AQUI O SEU LINK DA IMPLANTAÇÃO ENTRE AS ASPAS:
-    const APP_URL = "https://script.google.com/macros/s/AKfycbzsfu_Uw_H0uHUFUn51euG2y1XddKCAvvrIzUf2TBaGj3QJV2BMM4N1_ZRlihkuPQ4nnw/exec";
+    // --- COLE SEU LINK COMPLETO ABAIXO ---
+    const APP_URL = "SEU_LINK_AQUI_COM_HTTPS_E_EXEC";
+    // -------------------------------------
 
     const loginScreen = document.getElementById('login-screen');
     const chatScreen = document.getElementById('chat-screen');
     const msgContainer = document.getElementById('chat-messages');
 
     window.onload = () => {
-        if (localStorage.getItem('praca_user')) showChat();
-        else loginScreen.classList.add('active');
+        const user = localStorage.getItem('praca_user');
+        if (user) {
+            showChat();
+        } else {
+            loginScreen.classList.add('active');
+        }
         renderMessages();
     };
 
     function login() {
         const name = document.getElementById('username-input').value.trim();
-        if (name) { localStorage.setItem('praca_user', name); showChat(); }
+        if (name) { 
+            localStorage.setItem('praca_user', name); 
+            showChat(); 
+        }
     }
 
-    function logout() { localStorage.removeItem('praca_user'); location.reload(); }
+    function logout() { 
+        localStorage.removeItem('praca_user'); 
+        location.reload(); 
+    }
 
     function showChat() {
         loginScreen.classList.remove('active');
         chatScreen.classList.add('active');
+        renderMessages();
     }
 
-    async function sendMessage() {
+    function sendMessage() {
         const input = document.getElementById('message-input');
         const text = input.value.trim();
         const user = localStorage.getItem('praca_user');
         const btn = document.getElementById('send-btn');
 
-        if (text && APP_URL !== "https://script.google.com/macros/s/AKfycbzsfu_Uw_H0uHUFUn51euG2y1XddKCAvvrIzUf2TBaGj3QJV2BMM4N1_ZRlihkuPQ4nnw/exec") {
-            btn.disabled = true;
-            const msgData = { nome: user, mensagem: text, hora: new Date().toLocaleTimeString() };
-            
-            // 1. Salva localmente para visualização rápida
-            let localMsgs = JSON.parse(localStorage.getItem('praca_msgs') || '[]');
-            localMsgs.push(msgData);
-            localStorage.setItem('praca_msgs', JSON.stringify(localMsgs));
-            renderMessages();
-            input.value = '';
+        if (!text || APP_URL.includes("https://script.google.com/macros/s/AKfycbzsfu_Uw_H0uHUFUn51euG2y1XddKCAvvrIzUf2TBaGj3QJV2BMM4N1_ZRlihkuPQ4nnw/exec")) return;
 
-            // 2. Envia para a Planilha Google
-            try {
-                await fetch(APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Necessário para Google Script
-                    body: JSON.stringify(msgData)
-                });
-            } catch (e) { console.error("Erro ao enviar", e); }
+        btn.disabled = true;
+        const msgData = { 
+            nome: user, 
+            mensagem: text, 
+            hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+        };
+
+        // Salva na memória do navegador para aparecer na hora
+        let localMsgs = JSON.parse(localStorage.getItem('praca_msgs') || '[]');
+        localMsgs.push(msgData);
+        localStorage.setItem('praca_msgs', JSON.stringify(localMsgs));
+        renderMessages();
+        input.value = '';
+
+        // Tenta enviar para o Google Sheets
+        fetch(APP_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(msgData)
+        }).then(() => {
+            console.log("Enviado com sucesso!");
             btn.disabled = false;
-        }
+        }).catch(err => {
+            console.error("Erro ao enviar:", err);
+            btn.disabled = false;
+        });
     }
 
     function renderMessages() {
         const messages = JSON.parse(localStorage.getItem('praca_msgs') || '[]');
         const currentUser = localStorage.getItem('praca_user');
+        
         msgContainer.innerHTML = messages.map(m => `
             <div class="msg ${m.nome === currentUser ? 'me' : ''}">
-                <span class="msg-info"><strong>${m.nome}</strong> • ${m.hora}</span>
+                <span class="msg-info">${m.nome} • ${m.hora}</span>
                 ${m.mensagem}
             </div>
         `).join('');
+        
         msgContainer.scrollTop = msgContainer.scrollHeight;
     }
 
     function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+    // Atualiza a cada 3 segundos para ver se alguém limpou a praça
+    setInterval(renderMessages, 3000);
 </script>
+
 </body>
 </html>
