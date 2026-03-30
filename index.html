@@ -93,27 +93,35 @@
         alert("Cadastro enviado! Tente logar agora.");
     }
 
-    async function carregar() {
-        try {
-            const res = await fetch(URL);
-            const dados = await res.json();
-            const userAtivo = localStorage.getItem('p_user');
-            const div = document.getElementById('msgs');
-            
-            // Só atualiza se houver mensagens novas para evitar "pulo" na tela
-            if(dados.length !== ultimoCount) {
-                div.innerHTML = dados.map(m => `
-                    <div class="bubble ${m.usuario === userAtivo ? 'msg-me' : 'msg-others'}">
+  async function carregar() {
+    try {
+        const res = await fetch(URL);
+        const dados = await res.json();
+        
+        // Pegamos o seu nome e limpamos qualquer espaço sobrando
+        const userAtivo = localStorage.getItem('p_user').trim().toLowerCase();
+        const div = document.getElementById('msgs');
+        
+        if(dados.length !== ultimoCount) {
+            div.innerHTML = dados.map(m => {
+                // Comparamos os nomes de forma "limpa" (tudo minúsculo e sem espaços)
+                const souEu = m.usuario.toString().trim().toLowerCase() === userAtivo;
+                
+                return `
+                    <div class="bubble ${souEu ? 'msg-me' : 'msg-others'}">
                         <b>${m.usuario}</b>
                         ${m.msg}
                     </div>
-                `).join('');
-                div.scrollTop = div.scrollHeight;
-                ultimoCount = dados.length;
-            }
-        } catch(e) { console.log("Erro ao carregar"); }
+                `;
+            }).join('');
+            
+            div.scrollTop = div.scrollHeight;
+            ultimoCount = dados.length;
+        }
+    } catch(e) { 
+        console.log("Tentando reconectar..."); 
     }
-
+}
     function enviar() {
         const input = document.getElementById('msg');
         const txt = input.value.trim();
