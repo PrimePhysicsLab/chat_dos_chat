@@ -2,43 +2,56 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>A Praça - Login Social</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Praça - Chat Oficial</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; margin-top: 5px; }
-        .btn-login { background: #27ae60; color: white; }
-        .btn-cad { background: #3498db; color: white; }
-        #chat-area { display: none; } /* Escondido até logar */
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #e5ddd5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #app { width: 100%; max-width: 400px; background: white; height: 90vh; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+        .screen { padding: 20px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+        input { padding: 12px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; color: white; }
+        .btn-entrar { background: #25d366; }
+        .btn-cadastrar { background: #34b7f1; }
+        #chat-screen { display: none; background: #e5ddd5; }
+        #msg-container { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 10px 0; }
+        .bubble { background: white; padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .bubble b { color: #075e54; font-size: 12px; display: block; }
     </style>
 </head>
 <body>
 
-<div class="box" id="auth-area">
-    <h1>🌳 A Praça</h1>
-    <input type="text" id="user" placeholder="Usuário">
-    <input type="password" id="pass" placeholder="Senha">
-    <button class="btn-login" onclick="auth('login')">Entrar</button>
-    <button class="btn-cad" onclick="auth('cadastro')">Criar Conta</button>
-</div>
+<div id="app">
+    <div id="login-screen" class="screen">
+        <h1 style="text-align:center; color:#075e54">🌳 A Praça</h1>
+        <input type="text" id="user" placeholder="Nome de usuário">
+        <input type="password" id="pass" placeholder="Senha">
+        <button class="btn-entrar" onclick="autenticar('login')">Entrar</button>
+        <button class="btn-cadastrar" onclick="autenticar('cadastro')">Criar Nova Conta</button>
+    </div>
 
-<div class="box" id="chat-area">
-    <h2>Bem-vindo, <span id="display-user"></span>!</h2>
-    <input type="text" id="msg" placeholder="Mensagem...">
-    <button class="btn-login" onclick="enviar()">Enviar Mensagem</button>
-    <button onclick="location.reload()">Sair</button>
+    <div id="chat-screen" class="screen">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px">
+            <b>Chat da Praça 🟢</b>
+            <button onclick="location.reload()" style="background:#d33; padding:5px; margin:0">Sair</button>
+        </div>
+        <div id="msg-container"></div>
+        <div style="display:flex; gap:5px; background:white; padding:5px; border-radius:5px">
+            <input type="text" id="msg-input" placeholder="Mensagem..." style="flex-grow:1; margin:0; border:none">
+            <button class="btn-entrar" onclick="enviarMensagem()" style="margin:0">OK</button>
+        </div>
+    </div>
 </div>
 
 <script>
+    // 1. COLE SEU LINK NOVO AQUI:
     const APP_URL = "https://script.google.com/macros/s/AKfycbwZPofaS3kqtw2NIpWLSh_xRR0Ng1wWg7_jc5NAJ7yH7TcWsBEX3UKBzvdw8hou_Fn-WQ/exec";
 
-    async function auth(tipo) {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
+    function autenticar(tipo) {
+        const u = document.getElementById('user').value.trim();
+        const p = document.getElementById('pass').value.trim();
         if(!u || !p) return alert("Preencha tudo!");
 
-        // Envia para o Script
+        // Envia para a planilha (sem esperar resposta por causa do no-cors)
         fetch(APP_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -46,26 +59,35 @@
         });
 
         if(tipo === 'cadastro') {
-            alert("Cadastro enviado! Tente logar em instantes.");
+            alert("Cadastro enviado! Pode clicar em entrar agora.");
         } else {
-            // Como no-cors não lê resposta, vamos assumir o login para o exemplo
-            document.getElementById('auth-area').style.display = 'none';
-            document.getElementById('chat-area').style.display = 'block';
-            document.getElementById('display-user').innerText = u;
+            localStorage.setItem('user_praca', u);
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('chat-screen').style.display = 'flex';
         }
     }
 
-    function enviar() {
-        const m = document.getElementById('msg').value;
-        const u = document.getElementById('display-user').innerText;
+    function enviarMensagem() {
+        const input = document.getElementById('msg-input');
+        const txt = input.value.trim();
+        const user = localStorage.getItem('user_praca');
+        if(!txt) return;
+
+        // Mostra na tela na hora
+        const container = document.getElementById('msg-container');
+        container.innerHTML += `<div class="bubble"><b>${user}</b>${txt}</div>`;
+        container.scrollTop = container.scrollHeight;
+
+        // Envia para a planilha
         fetch(APP_URL, {
             method: 'POST',
             mode: 'no-cors',
-            body: JSON.stringify({ tipo: 'mensagem', usuario: u, msg: m })
+            body: JSON.stringify({ tipo: 'mensagem', usuario: user, msg: txt })
         });
-        document.getElementById('msg').value = "";
-        alert("Mensagem enviada à planilha!");
+
+        input.value = "";
     }
 </script>
+
 </body>
 </html>
