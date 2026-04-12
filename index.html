@@ -2,75 +2,61 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>A Praça</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, sans-serif; background: #fafafa; margin: 0; height: 100svh; display: flex; justify-content: center; }
-        #app { width: 100%; max-width: 500px; background: #fff; height: 100%; display: flex; flex-direction: column; border: 1px solid #ddd; position: relative; }
-        
-        .screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* LOGIN */
-        #login-screen { padding: 30px; justify-content: center; align-items: center; text-align: center; }
-        .regras { font-size: 11px; color: #555; margin-bottom: 20px; text-align: left; background: #f0f0f0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-        .input-group { width: 100%; position: relative; margin-bottom: 12px; }
-        input { width: 100%; padding: 14px; border: 1px solid #dbdbdb; border-radius: 8px; font-size: 16px; background: #fafafa; }
-        .btn-ver { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; color: #0095f6; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; }
-        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 8px; background: #0095f6; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-
-        /* CONTATOS */
-        .header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .user-card { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .online { color: #47dc31; font-size: 10px; font-weight: bold; }
-
-        /* CHAT */
-        #msgs { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; background: #f9f9f9; }
-        .bubble { padding: 10px; border-radius: 15px; font-size: 14px; max-width: 80%; }
-        .msg-me { align-self: flex-end; background: #3797f0; color: #fff; }
-        .msg-others { align-self: flex-start; background: #efefef; color: #262626; }
+        body { font-family: sans-serif; background: #fafafa; margin: 0; display: flex; justify-content: center; height: 100vh; }
+        #app { width: 100%; max-width: 450px; background: white; display: flex; flex-direction: column; border: 1px solid #ccc; position: relative; }
+        .screen { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow: hidden; }
+        .regras { font-size: 11px; color: #666; background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: left; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .btn-ver { position: absolute; right: 10px; top: 12px; border: none; background: none; color: #0095f6; font-weight: bold; cursor: pointer; }
+        .btn-main { width: 100%; padding: 14px; background: #0095f6; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .user-card { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; cursor: pointer; }
+        #msgs { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: #f9f9f9; }
+        .bubble { padding: 10px; border-radius: 10px; max-width: 80%; font-size: 14px; }
+        .msg-me { align-self: flex-end; background: #0095f6; color: white; }
+        .msg-others { align-self: flex-start; background: #e5e5e5; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="login-screen" class="screen">
-        <h1>A Praça</h1>
+        <h2 style="text-align:center">A Praça</h2>
         <div class="regras">
-            <b>Regras:</b><br>
-            • Nome: Máx 10 letras (sem números).<br>
-            • Senha: 4 números (pode começar com 0).
+            <b>Atenção:</b><br>
+            • Nome: Apenas letras (Máx 10).<br>
+            • Senha: 4 números (Ex: 0012).
         </div>
-        <div class="input-group">
-            <input type="text" id="user" placeholder="Nome de usuário" maxlength="10">
-        </div>
-        <div class="input-group">
-            <input type="password" id="pass" placeholder="Senha (4 dígitos)" maxlength="4">
+        <input type="text" id="user" placeholder="Nome de usuário" maxlength="10">
+        <div style="position:relative">
+            <input type="password" id="pass" placeholder="Senha (4 números)" maxlength="4">
             <button class="btn-ver" onclick="togglePass()">VER</button>
         </div>
-        <button class="btn-main" onclick="validar('entrar')">ENTRAR</button>
-        <button onclick="validar('cadastrar')" style="border:none; background:none; color:#0095f6; margin-top:20px; font-weight:bold;">CRIAR CONTA</button>
-        <p id="msg-erro" style="color:red; font-size:12px; margin-top:10px;"></p>
+        <button class="btn-main" onclick="processar('login')">ENTRAR</button>
+        <button onclick="processar('cadastro')" style="background:none; border:none; color:#0095f6; margin-top:20px; font-weight:bold; cursor:pointer">CRIAR CONTA</button>
+        <p id="feedback" style="text-align:center; font-size:12px; color:red"></p>
     </div>
 
-    <div id="list-screen" class="screen" style="display:none">
-        <div class="header">
+    <div id="list-screen" class="screen" style="display:none; padding:0">
+        <div style="padding:15px; border-bottom:1px solid #ccc; display:flex; justify-content:space-between; font-weight:bold">
             <span>Conversas</span>
-            <button onclick="sair()" style="border:none; background:none; color:red;">Sair</button>
+            <span onclick="location.reload()" style="color:red; cursor:pointer">Sair</span>
         </div>
         <div id="user-list"></div>
     </div>
 
-    <div id="chat-screen" class="screen" style="display:none">
-        <div class="header">
-            <button onclick="voltar()" style="border:none; background:none; font-size:20px;">‹</button>
-            <span id="chat-title">Chat</span>
-            <div style="width:20px"></div>
+    <div id="chat-screen" class="screen" style="display:none; padding:0">
+        <div style="padding:15px; border-bottom:1px solid #ccc; display:flex; align-items:center; gap:10px">
+            <button onclick="voltar()" style="border:none; background:none; font-size:20px; cursor:pointer">‹</button>
+            <span id="chat-title" style="font-weight:bold">Chat</span>
         </div>
         <div id="msgs"></div>
-        <div style="padding:10px; display:flex; gap:10px; border-top:1px solid #eee">
-            <input type="text" id="msg-input" placeholder="Mensagem...">
-            <button onclick="enviar()" style="border:none; background:none; color:#0095f6; font-weight:bold;">Enviar</button>
+        <div style="padding:10px; display:flex; gap:5px">
+            <input type="text" id="msg-input" placeholder="Mensagem..." style="margin:0">
+            <button onclick="enviar()" style="border:none; background:none; color:#0095f6; font-weight:bold">Enviar</button>
         </div>
     </div>
 </div>
@@ -85,49 +71,53 @@
     let ultimaQtd = 0;
 
     function som(id) { document.getElementById(id).play().catch(()=>{}); }
-    
     function togglePass() {
         const p = document.getElementById('pass');
         p.type = p.type === "password" ? "text" : "password";
         som('snd-click');
     }
 
-    function validar(tipo) {
+    async function processar(tipo) {
         const u = document.getElementById('user').value.trim();
         const s = document.getElementById('pass').value.trim();
-        const erro = document.getElementById('msg-erro');
-        
-        if(!/^[A-Za-z]+$/.test(u)) { erro.innerText = "Nome só pode ter letras!"; return; }
-        if(s.length !== 4 || isNaN(s)) { erro.innerText = "Senha deve ter 4 números!"; return; }
-        
-        erro.innerText = "";
-        som('snd-click');
-        if(tipo === 'entrar') entrar(u, s); else cadastrar(u, s);
-    }
+        const f = document.getElementById('feedback');
 
-    async function entrar(u, s) {
-        document.getElementById('msg-erro').innerText = "conectando...";
-        const res = await fetch(`${URL_SCRIPT}?acao=login&u=${encodeURIComponent(u)}&s=${encodeURIComponent(s)}`);
-        if(await res.text() === "ok") {
-            meuNome = u.toLowerCase();
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('list-screen').style.display = 'flex';
-            carregarUsuarios();
-            setInterval(carregarUsuarios, 10000);
+        if(!/^[A-Za-z]+$/.test(u)) { f.innerText="Nome só letras!"; return; }
+        if(s.length !== 4 || isNaN(s)) { f.innerText="Senha 4 números!"; return; }
+
+        som('snd-click');
+        f.style.color = "gray";
+        f.innerText = "carregando...";
+
+        const res = await fetch(`${URL_SCRIPT}?acao=${tipo}&u=${u}&s=${s}`);
+        const txt = await res.text();
+
+        if(txt.trim() === "ok") {
+            if(tipo === 'cadastro') {
+                alert("Conta criada! Clique em entrar.");
+                f.innerText = "";
+            } else {
+                meuNome = u.toLowerCase();
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('list-screen').style.display = 'flex';
+                carregarUsuarios();
+                setInterval(carregarUsuarios, 10000);
+            }
         } else {
-            document.getElementById('msg-erro').innerText = "Erro: Usuário ou Senha não conferem!";
+            f.style.color = "red";
+            f.innerText = (txt === "duplicado") ? "Nome já existe!" : "Usuário/Senha errados!";
         }
     }
 
     async function carregarUsuarios() {
-        const res = await fetch(`${URL_SCRIPT}?acao=get_all_users`);
+        const res = await fetch(`${URL_SCRIPT}?acao=get_users`);
         const users = await res.json();
         document.getElementById('user-list').innerHTML = users.map(u => {
             if(u.nome.toLowerCase() === meuNome) return '';
             return `<div class="user-card" onclick="abrirChat('${u.nome}')">
-                        <span>${u.nome}</span>
-                        <span class="online">${u.status}</span>
-                    </div>`;
+                <span>${u.nome}</span>
+                <span style="font-size:10px; color:${u.status==='Online'?'green':'#ccc'}">${u.status}</span>
+            </div>`;
         }).join('');
     }
 
@@ -162,13 +152,7 @@
         input.value = "";
     }
 
-    async function cadastrar(u, s) {
-        await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'cadastro', usuario: u, senha: s }) });
-        alert("Criado! Agora clique em ENTRAR.");
-    }
-
     function voltar() { som('snd-click'); clearInterval(window.loopChat); document.getElementById('chat-screen').style.display = 'none'; document.getElementById('list-screen').style.display = 'flex'; }
-    function sair() { som('snd-click'); location.reload(); }
 </script>
 </body>
 </html>
