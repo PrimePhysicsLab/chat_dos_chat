@@ -5,126 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>A Praça - Premium</title>
     <style>
+        /* --- ESTILOS --- */
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #cfd8dc; margin: 0; height: 100svh; display: flex; justify-content: center; overflow: hidden; }
         #app { width: 100%; max-width: 500px; background: #e5ddd5; height: 100%; display: flex; flex-direction: column; }
-        .header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         #msgs { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 15px; }
-        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 15px; max-width: 85%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; word-wrap: break-word; line-height: 1.4; }
+        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 15px; max-width: 85%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .msg-me { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 2px; }
         .msg-others { align-self: flex-start; background: #ffffff; border-bottom-left-radius: 2px; }
-        .bubble b { display: block; font-size: 11px; color: #075e54; margin-bottom: 2px; text-transform: uppercase; }
-        .hora { font-size: 10px; color: #888; float: right; margin-top: 5px; margin-left: 8px; }
-        .input-area { display: flex; gap: 8px; background: #f0f0f0; padding: 10px 15px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid #ddd; }
-        #msg-input { flex: 1; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 16px; background: white; }
-        .btn-enviar { background: #25d366; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .info-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; color: #888; }
+        .check { color: #34b7f1; font-weight: bold; }
+        
+        /* --- AVISO DE DIGITANDO --- */
+        #typing-area { height: 20px; padding-left: 15px; font-size: 12px; color: #075e54; font-style: italic; }
+
+        .input-area { display: flex; gap: 8px; background: #f0f0f0; padding: 10px; border-top: 1px solid #ddd; }
+        #msg-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
+        .btn-enviar { background: #25d366; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
+        
         .screen { flex: 1; display: flex; flex-direction: column; }
         #login-screen { background: white; padding: 30px; justify-content: center; gap: 15px; }
-        .input-group { position: relative; width: 100%; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        .toggle-pass { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #075e54; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-primario { padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; background: #075e54; color: white; }
-        .btn-secundario { background: #34b7f1; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; }
-        .btn-limpar { background: rgba(255,255,255,0.2); border: 1px solid white; font-size: 10px; padding: 4px 8px; border-radius: 4px; color: white; }
     </style>
 </head>
 <body>
+
 <div id="app">
     <div id="login-screen" class="screen">
-        <h1 style="text-align:center; color:#075e54; margin-bottom:10px">🌳 A Praça</h1>
-        <div class="input-group">
-            <input type="text" id="user" placeholder="Seu nome de usuário">
-        </div>
-        <div class="input-group">
-            <input type="password" id="pass" placeholder="Senha (4 dígitos)" maxlength="4">
-            <button class="toggle-pass" onclick="toggleSenha()">VER</button>
-        </div>
-        <button class="btn-primario" onclick="entrar()">ENTRAR</button>
-        <button class="btn-secundario" onclick="cadastrar()">CRIAR CONTA</button>
-        <p id="status" style="text-align:center; font-size:12px; color:gray"></p>
+        <h1 style="text-align:center; color:#075e54">🌳 A Praça</h1>
+        <input type="text" id="user" placeholder="Seu Nome">
+        <input type="password" id="pass" placeholder="Senha 4 dígitos" maxlength="4">
+        <button onclick="entrar()" style="padding:15px; background:#075e54; color:white; border:none; border-radius:8px; font-weight:bold;">ENTRAR</button>
+        <button onclick="cadastrar()" style="background:none; border:none; color:#34b7f1; cursor:pointer">Criar Conta</button>
     </div>
+
     <div id="chat-screen" class="screen" style="display:none">
         <div class="header">
-            <span>A Praça 🟢 <button class="btn-limpar" onclick="limparTudo()">Limpar Chat</button></span>
-            <span onclick="location.reload()" style="font-size:11px; cursor:pointer">SAIR</span>
+            <span>A Praça 🟢</span>
+            <button onclick="limparTudo()" style="background:none; border:1px solid white; color:white; font-size:10px;">Limpar</button>
         </div>
         <div id="msgs"></div>
+        <div id="typing-area"></div>
         <div class="input-area">
-            <input type="text" id="msg-input" placeholder="Digite uma mensagem..." autocomplete="off">
+            <input type="text" id="msg-input" placeholder="Mensagem..." autocomplete="off">
             <button class="btn-enviar" onclick="enviar()">➤</button>
         </div>
     </div>
 </div>
-<audio id="som-pop" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
+
+<audio id="som-pop" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
+<audio id="som-meu-typing" src="https://www.soundjay.com/communication/typewriter-key-1.mp3"></audio>
+<audio id="som-outro-typing" src="https://assets.mixkit.co/active_storage/sfx/1103/1103-preview.mp3" loop></audio>
+
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwZPofaS3kqtw2NIpWLSh_xRR0Ng1wWg7_jc5NAJ7yH7TcWsBEX3UKBzvdw8hou_Fn-WQ/exec";
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwZPofaS3kqtw2NIpWLSh_xRR0Ng1wWg7_jc5NAJ7yH7TcWsBEX3UKBzvdw8hou_Fn-WQ/exec"; // Atualize aqui!
     let meuNomeGlobal = "";
     let ultimaQtd = 0;
-    function toggleSenha() {
-        const input = document.getElementById('pass');
-        const btn = document.querySelector('.toggle-pass');
-        if (input.type === "password") { input.type = "text"; btn.innerText = "OCULTAR"; } 
-        else { input.type = "password"; btn.innerText = "VER"; }
-    }
+    let tempoTyping;
+
+    // --- BLOCO: LOGIN ---
     async function entrar() {
         const u = document.getElementById('user').value.trim();
         const s = document.getElementById('pass').value.trim();
-        if(!u || !s) return alert("Preencha!");
-        document.getElementById('status').innerText = "Conectando...";
-        try {
-            const res = await fetch(`${URL_SCRIPT}?acao=login&u=${encodeURIComponent(u)}&s=${encodeURIComponent(s)}`);
-            const texto = await res.text();
-            if(texto.trim() === "ok") {
-                meuNomeGlobal = u.toLowerCase().trim();
-                localStorage.setItem('p_user_nome', u);
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('chat-screen').style.display = 'flex';
-                carregar(); setInterval(carregar, 3000);
-            } else { alert("Erro!"); document.getElementById('status').innerText = ""; }
-        } catch(e) { alert("Erro de conexão!"); }
+        if(!u || !s) return;
+        const res = await fetch(`${URL_SCRIPT}?acao=login&u=${encodeURIComponent(u)}&s=${encodeURIComponent(s)}`);
+        if(await res.text() === "ok") {
+            meuNomeGlobal = u.toLowerCase();
+            localStorage.setItem('p_user_nome', u);
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('chat-screen').style.display = 'flex';
+            setInterval(carregar, 3000);
+        } else { alert("Erro!"); }
     }
+
+    // --- BLOCO: CADASTRAR ---
     function cadastrar() {
         const u = document.getElementById('user').value.trim();
         const s = document.getElementById('pass').value.trim();
-        if(!u || s.length !== 4) return alert("Erro nos dados!");
         fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'cadastro', usuario: u, senha: s }) });
         alert("Cadastrado!");
     }
+
+    // --- BLOCO: CARREGAR (Mensagens e Sons de Digitação dos outros) ---
     async function carregar() {
         try {
             const res = await fetch(URL_SCRIPT);
             const dados = await res.json();
-            const div = document.getElementById('msgs');
-            if(dados.length !== ultimaQtd) {
-                if(ultimaQtd > 0 && dados.length > ultimaQtd) {
-                   if(dados[dados.length-1].u.toLowerCase().trim() !== meuNomeGlobal) {
-                       document.getElementById('som-pop').play().catch(()=>{});
-                   }
-                }
-                div.innerHTML = dados.map(m => {
-                    const souEu = m.u.toString().toLowerCase().trim() === meuNomeGlobal;
-                    return `<div class="bubble ${souEu ? 'msg-me' : 'msg-others'}"><b>${m.u}</b>${m.m}<span class="hora">${m.h}</span></div>`;
-                }).join('');
-                div.scrollTop = div.scrollHeight;
-                ultimaQtd = dados.length;
+            
+            // Verifica se ALGUÉM está digitando
+            const areaTyping = document.getElementById('typing-area');
+            const somOutro = document.getElementById('som-outro-typing');
+            
+            if (dados.digitando && dados.digitando !== meuNomeGlobal) {
+                areaTyping.innerText = dados.digitando + " está digitando...";
+                somOutro.play().catch(()=>{}); // Som de espera/bolha
+            } else {
+                areaTyping.innerText = "";
+                somOutro.pause();
             }
-        } catch(e) {}
+
+            if(dados.mensagens.length !== ultimaQtd) {
+                document.getElementById('msgs').innerHTML = dados.mensagens.map(m => {
+                    const souEu = m.u.toLowerCase().trim() === meuNomeGlobal;
+                    return `<div class="bubble ${souEu ? 'msg-me' : 'msg-others'}">
+                        <b style="font-size:10px; display:block">${m.u}</b>${m.m}
+                        <div class="info-meta"><span>${m.h}</span>${souEu ? '<span class="check"> ✓✓</span>' : ''}</div>
+                    </div>`;
+                }).join('');
+                document.getElementById('msgs').scrollTop = document.getElementById('msgs').scrollHeight;
+                if(ultimaQtd > 0 && dados.mensagens.length > ultimaQtd) document.getElementById('som-pop').play();
+                ultimaQtd = dados.mensagens.length;
+            }
+        } catch(e){}
     }
+
+    // --- BLOCO: MEU STATUS DE DIGITAÇÃO ---
+    const inputMsg = document.getElementById('msg-input');
+    inputMsg.addEventListener('input', () => {
+        // Toca meu som de tecla
+        document.getElementById('som-meu-typing').play();
+        
+        // Avisa o Google que estou digitando
+        fetch(`${URL_SCRIPT}?acao=set_typing&u=${meuNomeGlobal}&status=sim`);
+        
+        // Se eu parar por 3 segundos, aviso que parei
+        clearTimeout(tempoTyping);
+        tempoTyping = setTimeout(() => {
+            fetch(`${URL_SCRIPT}?acao=set_typing&u=${meuNomeGlobal}&status=nao`);
+        }, 3000);
+    });
+
+    // --- BLOCO: ENVIAR ---
     function enviar() {
-        const input = document.getElementById('msg-input');
-        const txt = input.value.trim();
+        const txt = inputMsg.value.trim();
         if(!txt) return;
         fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'mensagem', usuario: localStorage.getItem('p_user_nome'), msg: txt }) });
-        input.value = "";
+        inputMsg.value = "";
+        fetch(`${URL_SCRIPT}?acao=set_typing&u=${meuNomeGlobal}&status=nao`); // Para de digitar ao enviar
     }
-    document.getElementById('msg-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviar(); });
-    async function limparTudo() {
-        if(!confirm("Apagar chat para todos?")) return;
-        fetch(`${URL_SCRIPT}?acao=limpar`);
-        document.getElementById('msgs').innerHTML = "";
-        ultimaQtd = 0;
-        alert("Limpando...");
-    }
+
+    function limparTudo() { fetch(`${URL_SCRIPT}?acao=limpar`); }
 </script>
 </body>
 </html>
