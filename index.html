@@ -39,8 +39,8 @@
 
         #typing-msg { height: 22px; padding: 2px 16px; font-size: 12px; color: #075e54; background: rgba(255,255,255,0.9); }
         .input-area { background: #f0f0f0; padding: 8px 12px; display: flex; gap: 8px; }
-        #msg-input { flex: 1; border-radius: 20px; padding: 10px 15px; border: none; }
-        .btn-send { background: #075e54; color: white; border: none; border-radius: 50%; width: 42px; height: 42px; }
+        #msg-input { flex: 1; border-radius: 20px; padding: 10px 15px; border: none; outline: none; }
+        .btn-send { background: #075e54; color: white; border: none; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; }
     </style>
 </head>
 <body>
@@ -49,27 +49,36 @@
     <div id="login-screen" class="screen">
         <div style="background:#075e54; width:70px; height:70px; border-radius:18px; margin:20px auto; display:flex; align-items:center; justify-content:center; color:white; font-size:35px;">🌳</div>
         <h2 style="color:#075e54;">A Praça</h2>
+        
         <div class="input-group">
             <input type="text" id="user" placeholder="Usuário (máx 10 letras)" maxlength="10">
         </div>
+        
         <div class="input-group">
-            <input type="password" id="pass" placeholder="Senha Numérica" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+            <input type="password" id="pass" placeholder="Senha (4 números)" 
+                   inputmode="numeric" 
+                   maxlength="4" 
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             <button class="btn-ver" onclick="toggleSenha()">VER</button>
         </div>
+
         <button class="btn-entrar" onclick="entrar()">ENTRAR</button>
-        <p id="status-log" style="font-size:12px; color:#888; margin-top:15px;"></p>
-        <button onclick="cadastrar()" style="background:none; border:none; color:#075e54; cursor:pointer">Criar Conta</button>
+        <p id="status-log" style="font-size:12px; color:#888; margin-top:15px; min-height:15px;"></p>
+        <button onclick="cadastrar()" style="background:none; border:none; color:#075e54; cursor:pointer; font-size:14px;">Criar nova conta</button>
     </div>
 
     <div id="list-screen" class="screen" style="display:none">
-        <div class="header"><span>Zap Praça</span><button class="btn-header" onclick="location.reload()">Sair</button></div>
+        <div class="header">
+            <span>Conversas</span>
+            <button class="btn-header" onclick="location.reload()">Sair</button>
+        </div>
         <div id="user-list"></div>
     </div>
 
     <div id="chat-screen" class="screen" style="display:none">
         <div class="header">
             <div style="display:flex; align-items:center; gap:10px">
-                <button class="btn-header" onclick="fecharChat()">←</button>
+                <button class="btn-header" onclick="fecharChat()" style="font-size:20px">←</button>
                 <div id="chat-title">Contato</div>
             </div>
             <button class="btn-header" onclick="limparTudo()">Limpar</button>
@@ -77,7 +86,7 @@
         <div id="msgs"></div>
         <div id="typing-msg"></div>
         <div class="input-area">
-            <input type="text" id="msg-input" placeholder="Mensagem">
+            <input type="text" id="msg-input" placeholder="Mensagem" autocomplete="off">
             <button class="btn-send" onclick="enviar()">➤</button>
         </div>
     </div>
@@ -105,7 +114,8 @@
     async function entrar() {
         const u = document.getElementById('user').value.trim();
         const s = document.getElementById('pass').value.trim();
-        if(!u || !s) return;
+        if(!u || !s) return alert("Preencha tudo!");
+        
         document.getElementById('status-log').innerText = "Validando...";
         const res = await fetch(`${URL_SCRIPT}?acao=login&u=${encodeURIComponent(u)}&s=${encodeURIComponent(s)}`);
         if(await res.text() === "ok") {
@@ -114,7 +124,7 @@
             document.getElementById('list-screen').style.display = 'flex';
             setInterval(sincronizar, 3000);
         } else {
-            alert("Erro! Verifique os dados.");
+            alert("Login falhou. Verifique se a conta existe e a senha está correta.");
             document.getElementById('status-log').innerText = "";
         }
     }
@@ -132,8 +142,10 @@
                 document.getElementById('user-list').innerHTML = data.usuarios.map(u => {
                     if(u.nome.toLowerCase() === meuNome) return '';
                     return `<div class="user-card" onclick="abrirChat('${u.nome}')">
-                        <div class="avatar">${u.nome[0].toUpperCase()}</div>
-                        <span>${u.nome}</span>
+                        <div class="user-info">
+                            <div class="avatar">${u.nome[0].toUpperCase()}</div>
+                            <span>${u.nome}</span>
+                        </div>
                         <div class="dot ${u.status === 'online' ? 'dot-online' : ''}"></div>
                     </div>`;
                 }).join('');
@@ -162,7 +174,7 @@
     }
 
     function fecharChat() {
-        chatAberto = false; document.getElementById('chat-screen').style.display = 'none';
+        chatAberto = false; chatAbertoNome = ""; document.getElementById('chat-screen').style.display = 'none';
         document.getElementById('list-screen').style.display = 'flex';
     }
 
@@ -182,11 +194,19 @@
     async function cadastrar() {
         const u = document.getElementById('user').value.trim();
         const s = document.getElementById('pass').value.trim();
-        if(!u || !s) return alert("Preencha Usuário e Senha.");
-        if(isNaN(s)) return alert("A senha deve ser apenas números!");
         
+        // --- TRAVAS DE VALIDAÇÃO ---
+        if(u.length < 3 || u.length > 10) {
+            return alert("O nome de usuário deve ter entre 3 e 10 caracteres!");
+        }
+        if(s.length !== 4 || isNaN(s)) {
+            return alert("A senha deve ter EXATAMENTE 4 números!");
+        }
+        
+        document.getElementById('status-log').innerText = "Criando conta...";
         await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'cadastro', usuario: u, senha: s }) });
-        alert("Cadastrado com sucesso! Clique em entrar.");
+        alert("Conta criada com sucesso! Agora você pode Entrar.");
+        document.getElementById('status-log').innerText = "";
     }
 </script>
 </body>
