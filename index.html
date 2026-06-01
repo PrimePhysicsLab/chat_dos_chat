@@ -7,7 +7,6 @@
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* Ocupação total da tela dinâmica do celular */
         html, body {
             background: #000000;
             margin: 0;
@@ -107,7 +106,7 @@
             flex-direction: column; 
             gap: 12px; 
             background: #000000;
-            -webkit-overflow-scrolling: touch; /* Rolagem lisa e veloz no iPhone/Android */
+            -webkit-overflow-scrolling: touch; 
         }
         
         /* Balões Limpos de Alta Legibilidade */
@@ -134,12 +133,15 @@
             border: 1px solid #444;
         }
         
-        .meta-check { text-align: right; font-size: 11px; color: #ff33aa; font-weight: bold; margin-top: 5px; display: block; }
+        /* Modificado para exibir apenas os checks discretos e elegantes */
+        .meta-check { text-align: right; font-size: 12px; font-weight: bold; margin-top: 5px; display: block; }
+        .check-enviado { color: #555555; }
+        .check-lido { color: #ff33aa; }
 
         #chat-title { font-size: 18px; color: #ffffff; font-weight: bold; letter-spacing: 0.5px; }
         #status-topo { font-size: 13px; color: #ff99dd; margin-top: 3px; font-weight: normal; }
         
-        /* ÁREA DE DIGITAÇÃO ROBUSTA - NUNCA CORTA NO CELULAR */
+        /* ÁREA DE DIGITAÇÃO ROBUSTA */
         .input-area { 
             background: #090909; 
             padding: 16px; 
@@ -147,7 +149,7 @@
             gap: 12px; 
             align-items: center;
             border-top: 1px solid #22111c;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom)); /* Previne o corte em barras virtuais de navegação */
+            padding-bottom: calc(16px + env(safe-area-inset-bottom)); 
             flex-shrink: 0;
         }
         #msg-input { 
@@ -296,7 +298,7 @@
             const res = await fetch(`${URL_SCRIPT}?u=${meuNome}`);
             const data = await res.json();
 
-            // Status no Topo
+            // Status no Topo corrigido para ler as informações em tempo real
             if (data.outro) {
                 document.getElementById('chat-title').innerText = data.outro.nome.toUpperCase();
                 let sTopo = document.getElementById('status-topo');
@@ -317,13 +319,12 @@
                 ultimoEstadoDigitando = data.outro.digitando;
             }
 
-            // Renderizador Limpo e Seguro (Sem fuso horário poluindo os balões)
+            // Renderizador Sem o texto "Lido" (Apenas os checks ✓✓ mudam de cor)
             if(data.mensagens.length !== ultimaQtd) {
                 document.getElementById('msgs').innerHTML = data.mensagens.map(m => {
                     const souEu = m.u.toLowerCase() === meuNome;
-                    // Exibe puramente a mensagem. A hora bugada da planilha foi varrida daqui de dentro.
                     return `<div class="bubble ${souEu ? 'msg-me' : 'msg-others'}">${m.m}
-                    ${souEu ? `<span class="meta-check">${m.lido ? '✓✓ Lido' : '✓✓'}</span>` : ''}</div>`;
+                    ${souEu ? `<span class="meta-check ${m.lido ? 'check-lido' : 'check-enviado'}">✓✓</span>` : ''}</div>`;
                 }).join('');
                 
                 let painelMsgs = document.getElementById('msgs');
