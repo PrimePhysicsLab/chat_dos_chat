@@ -11,13 +11,13 @@
             background: #000000;
             margin: 0;
             padding: 0;
-            height: 100dvh;
+            height: 100svh; 
             width: 100%;
             overflow: hidden;
         }
         
         body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center;
@@ -27,13 +27,13 @@
             width: 100%; 
             max-width: 500px; 
             background: #000000; 
-            height: 100dvh; 
+            height: 100svh; 
             display: flex; 
             flex-direction: column; 
             position: relative;
         }
         
-        /* Cabeçalho Rosa Premium */
+        /* Cabeçalho Rosa Sky */
         .header { 
             background: #12050c; 
             color: #ff66cc; 
@@ -45,6 +45,7 @@
             z-index: 10; 
             border-bottom: 2px solid #ff33aa;
             flex-shrink: 0;
+            padding-top: calc(14px + env(safe-area-inset-top));
         }
         .btn-header { 
             border: none; 
@@ -57,7 +58,7 @@
 
         .screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
 
-        /* LOGIN */
+        /* TELA DE LOGIN */
         #login-screen { background: #000000; padding: 30px; justify-content: center; align-items: center; text-align: center; }
         .logo-box { 
             background: #ff33aa; 
@@ -75,9 +76,9 @@
         
         input[type="text"], input[type="password"] { 
             width: 100%; 
-            padding: 15px; 
+            padding: 16px; 
             border: 2px solid #331122; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             font-size: 16px; 
             outline: none; 
             background: #121212; 
@@ -87,9 +88,9 @@
         
         .btn-entrar { 
             width: 100%; 
-            padding: 15px; 
+            padding: 16px; 
             border: none; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             background: #ff33aa; 
             color: white; 
             font-weight: bold; 
@@ -97,23 +98,23 @@
             cursor: pointer; 
         }
 
-        /* PAINEL DE CONVERSA INTEGRAL */
+        /* ÁREA DAS MENSAGENS */
         #msgs { 
             flex: 1; 
             overflow-y: auto; 
             padding: 20px 16px; 
             display: flex; 
             flex-direction: column; 
-            gap: 12px; 
+            gap: 14px; 
             background: #000000;
             -webkit-overflow-scrolling: touch; 
         }
         
-        /* Balões Limpos de Alta Legibilidade */
+        /* Balões Grandes e Textos Confortáveis */
         .bubble { 
-            padding: 14px 18px; 
-            font-size: 16.5px; 
-            max-width: 82%; 
+            padding: 16px 20px; 
+            font-size: 17px; 
+            max-width: 85%; 
             border-radius: 22px; 
             box-shadow: 0 2px 8px rgba(255, 51, 170, 0.1);
             line-height: 1.5;
@@ -133,52 +134,58 @@
             border: 1px solid #444;
         }
         
-        /* Modificado para exibir apenas os checks discretos e elegantes */
-        .meta-check { text-align: right; font-size: 12px; font-weight: bold; margin-top: 5px; display: block; }
+        .meta-check { text-align: right; font-size: 12px; font-weight: bold; margin-top: 6px; display: block; }
         .check-enviado { color: #555555; }
         .check-lido { color: #ff33aa; }
 
-        #chat-title { font-size: 18px; color: #ffffff; font-weight: bold; letter-spacing: 0.5px; }
-        #status-topo { font-size: 13px; color: #ff99dd; margin-top: 3px; font-weight: normal; }
+        #chat-title { font-size: 18px; color: #ffffff; font-weight: bold; }
+        #status-topo { font-size: 13px; color: #ff99dd; margin-top: 2px; }
         
-        /* ÁREA DE DIGITAÇÃO ROBUSTA */
+        /* ÁREA DE DIGITAÇÃO FIXA, GIGANTE E ROBUSTA (SIMULA TELA CHEIA) */
         .input-area { 
-            background: #090909; 
-            padding: 16px; 
+            background: #050505; 
+            padding: 20px 16px; 
             display: flex; 
             gap: 12px; 
             align-items: center;
             border-top: 1px solid #22111c;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom)); 
+            padding-bottom: calc(20px + env(safe-area-inset-bottom)); 
             flex-shrink: 0;
         }
+        
+        /* Input expandido para combinar com o tamanho avantajado das mensagens */
         #msg-input { 
             flex: 1; 
-            border-radius: 28px; 
-            padding: 15px 22px; 
-            border: 1px solid #331122; 
+            border-radius: 30px; 
+            padding: 20px 26px; /* Altura generosa simula bloco massivo */
+            border: 2px solid #331122; 
             outline: none; 
             background: #141414;
             color: #ffffff;
-            font-size: 16px;
+            font-size: 18px; /* Texto maior e muito mais agradável */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            transition: border-color 0.2s;
         }
         #msg-input:focus { border-color: #ff33aa; }
         
+        /* Botão de Enviar Super dimensionado */
         .btn-send { 
             background: #ff33aa; 
             color: white; 
             border: none; 
             border-radius: 50%; 
-            width: 52px; 
-            height: 52px; 
-            font-size: 22px; 
+            width: 58px; 
+            height: 58px; 
+            font-size: 24px; 
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 12px rgba(255, 51, 170, 0.4);
+            box-shadow: 0 0 15px rgba(255, 51, 170, 0.4);
             flex-shrink: 0;
+            transition: transform 0.1s;
         }
+        .btn-send:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -227,7 +234,7 @@
     
     let meuNome = "", ultimaQtd = 0, statusAba = "ativo", ultimoEstadoDigitando = "nao";
 
-    // Engine Física de Áudio do Sky
+    // Sons do Sky Engine
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function tocarSomEnvio() {
@@ -295,83 +302,4 @@
             const dig = document.getElementById('msg-input').value.length > 0 ? "sim" : "nao";
             enviarPresenca(dig);
 
-            const res = await fetch(`${URL_SCRIPT}?u=${meuNome}`);
-            const data = await res.json();
-
-            // Status no Topo corrigido para ler as informações em tempo real
-            if (data.outro) {
-                document.getElementById('chat-title').innerText = data.outro.nome.toUpperCase();
-                let sTopo = document.getElementById('status-topo');
-                
-                if (data.outro.digitando === "sim") {
-                    sTopo.innerText = "digitando...";
-                    sTopo.style.color = "#ff33aa";
-                    if (ultimoEstadoDigitando !== "sim") {
-                        tocarSomDigitando();
-                    }
-                } else if (data.outro.status === "online") {
-                    sTopo.innerText = "online agora";
-                    sTopo.style.color = "#ff99dd";
-                } else {
-                    sTopo.innerText = "visto recentemente";
-                    sTopo.style.color = "#555555";
-                }
-                ultimoEstadoDigitando = data.outro.digitando;
-            }
-
-            // Renderizador Sem o texto "Lido" (Apenas os checks ✓✓ mudam de cor)
-            if(data.mensagens.length !== ultimaQtd) {
-                document.getElementById('msgs').innerHTML = data.mensagens.map(m => {
-                    const souEu = m.u.toLowerCase() === meuNome;
-                    return `<div class="bubble ${souEu ? 'msg-me' : 'msg-others'}">${m.m}
-                    ${souEu ? `<span class="meta-check ${m.lido ? 'check-lido' : 'check-enviado'}">✓✓</span>` : ''}</div>`;
-                }).join('');
-                
-                let painelMsgs = document.getElementById('msgs');
-                painelMsgs.scrollTop = painelMsgs.scrollHeight;
-                
-                if (ultimaQtd > 0 && data.mensagens.length > ultimaQtd) {
-                    let ultMsg = data.mensagens[data.mensagens.length - 1];
-                    if (ultMsg.u.toLowerCase() !== meuNome) {
-                        tocarSomRecebimento();
-                    }
-                }
-                ultimaQtd = data.mensagens.length;
-            }
-        } catch(e){}
-    }
-
-    function enviar() {
-        const input = document.getElementById('msg-input');
-        if(!input.value.trim()) return;
-        
-        tocarSomEnvio(); 
-        
-        fetch(URL_SCRIPT, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: JSON.stringify({ tipo: 'mensagem', usuario: meuNome, msg: input.value }) 
-        });
-        input.value = "";
-    }
-
-    async function limparTudo() {
-        if(confirm("Deseja deletar todo o histórico do Sky?")) { 
-            await fetch(`${URL_SCRIPT}?acao=limpar`); 
-            location.reload(); 
-        }
-    }
-
-    async function cadastrar() {
-        const u = document.getElementById('user').value.trim();
-        const s = document.getElementById('pass').value.trim();
-        if(u.length < 3 || s.length !== 4 || isNaN(s)) return alert("Usuário min 3 letras. Senha 4 números.");
-        
-        document.getElementById('status-log').innerText = "Processando...";
-        await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: 'cadastro', usuario: u, senha: s }) });
-        alert("Sua conta Premium no Sky foi gerada!");
-        document.getElementById('status-log').innerText = "";
-    }
-</script>
-</body>
-</html>
+            const res
